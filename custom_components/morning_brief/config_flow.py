@@ -48,6 +48,7 @@ class MorningBriefConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         """Initialize the config flow."""
+        super().__init__()
         self._config: dict[str, Any] = _default_config()
 
     @staticmethod
@@ -137,7 +138,8 @@ class MorningBriefOptionsFlow(OptionsFlow):
 
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize the options flow."""
-        self._config_entry = config_entry
+        super().__init__()
+        self.config_entry = config_entry
         self._config = _merge_entry_config(config_entry)
         self._selected_topic_index: int | None = None
 
