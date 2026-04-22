@@ -90,6 +90,10 @@ class ZAIClient:
                 response = await client.post(url, json=payload, headers=headers)
                 response.raise_for_status()
                 break
+            except httpx.TimeoutException as err:
+                message = self._build_timeout_message(err, url)
+                _LOGGER.error("z.ai request timed out: %s", message)
+                raise RuntimeError(message) from err
             except httpx.HTTPStatusError as err:
                 if err.response.status_code == 429 and attempt < _MAX_RETRIES:
                     delay = self._get_retry_delay(err.response, attempt)
@@ -105,9 +109,10 @@ class ZAIClient:
                 message = self._build_error_message(err)
                 _LOGGER.error("z.ai request failed: %s", message)
                 raise RuntimeError(f"z.ai request failed: {message}") from err
-            except httpx.HTTPError as err:
-                _LOGGER.error("z.ai request failed: %s", err)
-                raise RuntimeError(f"z.ai request failed: {err}") from err
+            except httpx.RequestError as err:
+                message = self._build_request_error_message(err)
+                _LOGGER.error("z.ai request failed: %s", message)
+                raise RuntimeError(f"z.ai request failed: {message}") from err
 
         data = response.json()
         content = self._extract_message_content(data)
@@ -157,10 +162,45 @@ class ZAIClient:
         """Build a more useful error message from the HTTP response."""
         response = err.response
         response_text = response.text.strip()
+        request_id = self._get_request_id(response)
         if response_text:
-            return (
+            message = (
                 f"HTTP {response.status_code} for url '{response.request.url}': "
                 f"{response_text}"
             )
+            if request_id:
+                message = f"{message} (request id: {request_id})"
+            return message
 
-        return str(err)
+        message = str(err)
+        if request_id:
+            message = f"{message} (request id: {request_id})"
+        return message
+
+    def _build_timeout_message(self, err: httpx.TimeoutException, url: str) -> str:
+        """Build a useful timeout message."""
+        timeout = "configured"
+        if err.request is not None:
+            timeout_config = err.request.extensions.get("timeout")
+            if isinstance(timeout_config, dict) and timeout_config.get("read") is not None:
+                timeout = str(timeout_config["read"])
+
+        return (
+            "z.ai request timed out before a response was returned "
+            f"for url '{url}' (read timeout: {timeout}s). "
+            "The request may be too slow or the provider may be rate-limiting."
+        )
+
+    def _build_request_error_message(self, err: httpx.RequestError) -> str:
+        """Build a useful network error message."""
+        request_url = err.request.url if err.request else self._build_chat_completion_url()
+        details = str(err).strip() or err.__class__.__name__
+        return f"{details} for url '{request_url}'"
+
+    def _get_request_id(self, response: httpx.Response) -> str | None:
+        """Extract a request identifier from common response headers."""
+        for header in ("x-request-id", "request-id", "x-amzn-requestid"):
+            value = response.headers.get(header)
+            if value:
+                return value
+        return None

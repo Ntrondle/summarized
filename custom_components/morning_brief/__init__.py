@@ -24,6 +24,7 @@ from .const import (
     ATTR_SPEAKER_ENTITY_ID,
     DEFAULT_CACHE_ENABLED,
     DEFAULT_CACHE_TTL_MINUTES,
+    DEFAULT_HTTP_TIMEOUT_SECONDS,
     DEFAULT_RSS_LOOKBACK_DAYS,
     DEFAULT_SYSTEM_PROMPT,
     DEFAULT_ZAI_BASE_URL,
@@ -142,7 +143,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     cache_manager = CacheManager(hass, hass.data[DOMAIN][DATA_CACHE_DIR])
     await cache_manager.async_prepare()
 
-    http_client = httpx.AsyncClient(timeout=30.0, follow_redirects=True)
+    http_client = httpx.AsyncClient(
+        timeout=httpx.Timeout(DEFAULT_HTTP_TIMEOUT_SECONDS),
+        follow_redirects=True,
+    )
     coordinator = MorningBriefCoordinator(
         hass,
         config=config,
