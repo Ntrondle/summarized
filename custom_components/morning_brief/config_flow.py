@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
 import logging
 from typing import Any
 from urllib.parse import urlparse
@@ -318,8 +317,8 @@ def _default_config() -> dict[str, Any]:
 
 def _merge_entry_config(config_entry: ConfigEntry) -> dict[str, Any]:
     """Merge entry data and options."""
-    merged = deepcopy(config_entry.data)
-    merged.update(deepcopy(config_entry.options))
+    merged = dict(config_entry.data)
+    merged.update(dict(config_entry.options))
     merged.setdefault(CONF_TOPICS, [])
     return merged
 
