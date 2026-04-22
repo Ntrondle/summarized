@@ -1,0 +1,109 @@
+{
+  "title": "Brief Matinal",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration du brief matinal",
+        "description": "Configurez les acces API, le cache et le prompt global.",
+        "data": {
+          "zai_api_key": "Cle API z.ai",
+          "zai_base_url": "URL de base z.ai",
+          "zai_model": "Modele z.ai",
+          "elevenlabs_api_key": "Cle API ElevenLabs",
+          "rss_lookback_days": "Jours de recherche RSS",
+          "cache_enabled": "Activer le cache audio",
+          "cache_ttl_minutes": "Duree du cache en minutes",
+          "system_prompt": "Prompt systeme global"
+        }
+      },
+      "add_topic": {
+        "title": "Ajouter un sujet",
+        "description": "Ajoutez un sujet et ses flux RSS. Entrez une URL par ligne.",
+        "data": {
+          "name": "Nom du sujet",
+          "topic_prompt": "Prompt du sujet",
+          "feeds": "URLs des flux RSS"
+        }
+      },
+      "topic_menu": {
+        "title": "Sujets",
+        "menu_options": {
+          "add_topic": "Ajouter un autre sujet",
+          "finish": "Terminer la configuration"
+        }
+      }
+    },
+    "error": {
+      "invalid_feeds": "Entrez au moins une URL de flux RSS valide.",
+      "invalid_input": "Une ou plusieurs valeurs sont invalides."
+    },
+    "abort": {
+      "already_configured": "Le brief matinal est deja configure.",
+      "invalid_import": "La configuration YAML importee est invalide.",
+      "no_topics": "Au moins un sujet est requis."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options du brief matinal",
+        "menu_options": {
+          "edit_globals": "Modifier les reglages globaux",
+          "add_topic": "Ajouter un sujet",
+          "edit_topic_select": "Modifier un sujet",
+          "delete_topic": "Supprimer un sujet",
+          "save": "Enregistrer les modifications"
+        }
+      },
+      "edit_globals": {
+        "title": "Modifier les reglages globaux",
+        "data": {
+          "zai_api_key": "Cle API z.ai",
+          "zai_base_url": "URL de base z.ai",
+          "zai_model": "Modele z.ai",
+          "elevenlabs_api_key": "Cle API ElevenLabs",
+          "rss_lookback_days": "Jours de recherche RSS",
+          "cache_enabled": "Activer le cache audio",
+          "cache_ttl_minutes": "Duree du cache en minutes",
+          "system_prompt": "Prompt systeme global"
+        }
+      },
+      "add_topic": {
+        "title": "Ajouter un sujet",
+        "description": "Entrez une URL de flux RSS par ligne.",
+        "data": {
+          "name": "Nom du sujet",
+          "topic_prompt": "Prompt du sujet",
+          "feeds": "URLs des flux RSS"
+        }
+      },
+      "edit_topic_select": {
+        "title": "Choisir le sujet a modifier",
+        "data": {
+          "selected_topic": "Sujet"
+        }
+      },
+      "edit_topic": {
+        "title": "Modifier le sujet",
+        "data": {
+          "name": "Nom du sujet",
+          "topic_prompt": "Prompt du sujet",
+          "feeds": "URLs des flux RSS"
+        }
+      },
+      "delete_topic": {
+        "title": "Supprimer le sujet",
+        "data": {
+          "selected_topic": "Sujet"
+        }
+      }
+    },
+    "error": {
+      "invalid_feeds": "Entrez au moins une URL de flux RSS valide.",
+      "invalid_input": "Une ou plusieurs valeurs sont invalides."
+    },
+    "abort": {
+      "no_topics": "Aucun sujet n'est configure."
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "title": "Morning Brief",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Morning Brief setup",
+        "description": "Configure API access, caching, and the global prompt.",
+        "data": {
+          "zai_api_key": "z.ai API key",
+          "zai_base_url": "z.ai base URL",
+          "zai_model": "z.ai model",
+          "elevenlabs_api_key": "ElevenLabs API key",
+          "rss_lookback_days": "RSS lookback days",
+          "cache_enabled": "Enable audio cache",
+          "cache_ttl_minutes": "Cache TTL in minutes",
+          "system_prompt": "Global system prompt"
+        }
+      },
+      "add_topic": {
+        "title": "Add topic",
+        "description": "Add a topic and its RSS feeds. Enter one feed URL per line.",
+        "data": {
+          "name": "Topic name",
+          "topic_prompt": "Topic prompt",
+          "feeds": "RSS feed URLs"
+        }
+      },
+      "topic_menu": {
+        "title": "Topics",
+        "menu_options": {
+          "add_topic": "Add another topic",
+          "finish": "Finish setup"
+        }
+      }
+    },
+    "error": {
+      "invalid_feeds": "Enter at least one valid RSS feed URL.",
+      "invalid_input": "One or more values are invalid."
+    },
+    "abort": {
+      "already_configured": "Morning Brief is already configured.",
+      "invalid_import": "The imported YAML configuration is invalid.",
+      "no_topics": "At least one topic is required."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Morning Brief options",
+        "menu_options": {
+          "edit_globals": "Edit global settings",
+          "add_topic": "Add topic",
+          "edit_topic_select": "Edit topic",
+          "delete_topic": "Delete topic",
+          "save": "Save changes"
+        }
+      },
+      "edit_globals": {
+        "title": "Edit global settings",
+        "data": {
+          "zai_api_key": "z.ai API key",
+          "zai_base_url": "z.ai base URL",
+          "zai_model": "z.ai model",
+          "elevenlabs_api_key": "ElevenLabs API key",
+          "rss_lookback_days": "RSS lookback days",
+          "cache_enabled": "Enable audio cache",
+          "cache_ttl_minutes": "Cache TTL in minutes",
+          "system_prompt": "Global system prompt"
+        }
+      },
+      "add_topic": {
+        "title": "Add topic",
+        "description": "Enter one RSS feed URL per line.",
+        "data": {
+          "name": "Topic name",
+          "topic_prompt": "Topic prompt",
+          "feeds": "RSS feed URLs"
+        }
+      },
+      "edit_topic_select": {
+        "title": "Choose topic to edit",
+        "data": {
+          "selected_topic": "Topic"
+        }
+      },
+      "edit_topic": {
+        "title": "Edit topic",
+        "data": {
+          "name": "Topic name",
+          "topic_prompt": "Topic prompt",
+          "feeds": "RSS feed URLs"
+        }
+      },
+      "delete_topic": {
+        "title": "Delete topic",
+        "data": {
+          "selected_topic": "Topic"
+        }
+      }
+    },
+    "error": {
+      "invalid_feeds": "Enter at least one valid RSS feed URL.",
+      "invalid_input": "One or more values are invalid."
+    },
+    "abort": {
+      "no_topics": "No topics are configured."
+    }
+  }
+}
+

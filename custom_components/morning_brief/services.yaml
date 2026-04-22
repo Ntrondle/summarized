@@ -1,0 +1,24 @@
+generate:
+  name: Generate morning brief
+  description: Generate a spoken French morning brief and play it on a media player.
+  fields:
+    speaker_entity_id:
+      name: Speaker entity
+      description: Media player entity that should play the generated brief.
+      required: true
+      selector:
+        entity:
+          domain: media_player
+    elevenlabs_voice_id:
+      name: ElevenLabs voice ID
+      description: Voice ID used for speech generation.
+      required: true
+      selector:
+        text:
+    elevenlabs_model:
+      name: ElevenLabs model
+      description: ElevenLabs TTS model ID to use for this run.
+      required: true
+      selector:
+        text:
+
