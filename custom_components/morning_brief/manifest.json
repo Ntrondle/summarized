@@ -3,6 +3,10 @@
   "name": "Morning Brief",
   "codeowners": [],
   "config_flow": true,
+  "dependencies": [
+    "http"
+  ],
+  "documentation": "https://github.com/Ntrondle/summarized",
   "single_config_entry": true,
   "iot_class": "cloud_polling",
   "requirements": [
@@ -11,4 +15,3 @@
   ],
   "version": "0.1.0"
 }
-
