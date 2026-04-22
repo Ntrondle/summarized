@@ -55,7 +55,7 @@ class MorningBriefConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Return the options flow."""
-        return MorningBriefOptionsFlow(config_entry)
+        return MorningBriefOptionsFlow()
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Handle the initial setup flow."""
@@ -136,15 +136,17 @@ class MorningBriefConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class MorningBriefOptionsFlow(OptionsFlow):
     """Manage Morning Brief options."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
+    def __init__(self) -> None:
         """Initialize the options flow."""
         super().__init__()
-        self.config_entry = config_entry
-        self._config = _merge_entry_config(config_entry)
+        self._config: dict[str, Any] | None = None
         self._selected_topic_index: int | None = None
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Show the options menu."""
+        if self._config is None:
+            self._config = _merge_entry_config(self.config_entry)
+
         menu_options = ["edit_globals", "add_topic"]
         if self._config[CONF_TOPICS]:
             menu_options.extend(["edit_topic_select", "delete_topic"])
