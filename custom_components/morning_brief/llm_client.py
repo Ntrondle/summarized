@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import Any
@@ -9,6 +10,9 @@ from typing import Any
 import httpx
 
 _LOGGER = logging.getLogger(__name__)
+
+_MAX_RETRIES = 3
+_BASE_RETRY_DELAY_SECONDS = 2.0
 
 
 class ZAIClient:
@@ -81,12 +85,29 @@ class ZAIClient:
             "Content-Type": "application/json",
         }
 
-        try:
-            response = await client.post(url, json=payload, headers=headers)
-            response.raise_for_status()
-        except httpx.HTTPError as err:
-            _LOGGER.error("z.ai request failed: %s", err)
-            raise RuntimeError(f"z.ai request failed: {err}") from err
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                response = await client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+                break
+            except httpx.HTTPStatusError as err:
+                if err.response.status_code == 429 and attempt < _MAX_RETRIES:
+                    delay = self._get_retry_delay(err.response, attempt)
+                    _LOGGER.warning(
+                        "z.ai rate limit reached, retrying in %.1f seconds (attempt %s/%s)",
+                        delay,
+                        attempt + 1,
+                        _MAX_RETRIES,
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+
+                message = self._build_error_message(err)
+                _LOGGER.error("z.ai request failed: %s", message)
+                raise RuntimeError(f"z.ai request failed: {message}") from err
+            except httpx.HTTPError as err:
+                _LOGGER.error("z.ai request failed: %s", err)
+                raise RuntimeError(f"z.ai request failed: {err}") from err
 
         data = response.json()
         content = self._extract_message_content(data)
@@ -121,3 +142,25 @@ class ZAIClient:
 
         return str(content)
 
+    def _get_retry_delay(self, response: httpx.Response, attempt: int) -> float:
+        """Return the retry delay using Retry-After when available."""
+        retry_after = response.headers.get("Retry-After")
+        if retry_after:
+            try:
+                return max(float(retry_after), _BASE_RETRY_DELAY_SECONDS)
+            except ValueError:
+                pass
+
+        return _BASE_RETRY_DELAY_SECONDS * (2**attempt)
+
+    def _build_error_message(self, err: httpx.HTTPStatusError) -> str:
+        """Build a more useful error message from the HTTP response."""
+        response = err.response
+        response_text = response.text.strip()
+        if response_text:
+            return (
+                f"HTTP {response.status_code} for url '{response.request.url}': "
+                f"{response_text}"
+            )
+
+        return str(err)

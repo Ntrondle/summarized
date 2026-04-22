@@ -1,8 +1,6 @@
 """Main orchestration logic for Morning Brief."""
 
 from __future__ import annotations
-
-import asyncio
 import logging
 from typing import Any
 
@@ -79,12 +77,9 @@ class MorningBriefCoordinator:
             if not topic_data:
                 raise RuntimeError("No RSS items were available for any configured topic")
 
-            summaries = await asyncio.gather(
-                *[
-                    self._async_summarize_topic(topic)
-                    for topic in topic_data
-                ]
-            )
+            summaries = []
+            for topic in topic_data:
+                summaries.append(await self._async_summarize_topic(topic))
             if not summaries:
                 raise RuntimeError("No topic summaries were generated")
 
@@ -118,4 +113,3 @@ class MorningBriefCoordinator:
             topic["items"],
         )
         return {"name": topic["name"], "summary": summary}
-
