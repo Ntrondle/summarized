@@ -132,6 +132,35 @@ class MorningBriefConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_create_entry(title=NAME, data=config)
 
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Allow the user to reconfigure required integration data."""
+        entry = self._get_reconfigure_entry()
+        current = _merge_entry_config(entry)
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            try:
+                data_updates = _normalize_globals(user_input)
+            except ValueError:
+                errors["base"] = "invalid_input"
+            else:
+                if entry.unique_id is not None:
+                    await self.async_set_unique_id(entry.unique_id)
+                    self._abort_if_unique_id_mismatch()
+
+                return self.async_update_reload_and_abort(
+                    entry,
+                    data_updates=data_updates,
+                )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=_build_globals_schema(current),
+            errors=errors,
+        )
+
 
 class MorningBriefOptionsFlow(OptionsFlow):
     """Manage Morning Brief options."""

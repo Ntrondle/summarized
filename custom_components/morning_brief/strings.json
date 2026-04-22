@@ -25,6 +25,20 @@
           "feeds": "RSS feed URLs"
         }
       },
+      "reconfigure": {
+        "title": "Reconfigure Morning Brief",
+        "description": "Update API access, caching, and the global prompt.",
+        "data": {
+          "zai_api_key": "z.ai API key",
+          "zai_base_url": "z.ai base URL",
+          "zai_model": "z.ai model",
+          "elevenlabs_api_key": "ElevenLabs API key",
+          "rss_lookback_days": "RSS lookback days",
+          "cache_enabled": "Enable audio cache",
+          "cache_ttl_minutes": "Cache TTL in minutes",
+          "system_prompt": "Global system prompt"
+        }
+      },
       "topic_menu": {
         "title": "Topics",
         "menu_options": {
@@ -40,7 +54,8 @@
     "abort": {
       "already_configured": "Morning Brief is already configured.",
       "invalid_import": "The imported YAML configuration is invalid.",
-      "no_topics": "At least one topic is required."
+      "no_topics": "At least one topic is required.",
+      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
     }
   },
   "options": {
@@ -107,4 +122,3 @@
     }
   }
 }
-

@@ -25,6 +25,20 @@
           "feeds": "URLs des flux RSS"
         }
       },
+      "reconfigure": {
+        "title": "Reconfigurer le brief matinal",
+        "description": "Mettez a jour les acces API, le cache et le prompt global.",
+        "data": {
+          "zai_api_key": "Cle API z.ai",
+          "zai_base_url": "URL de base z.ai",
+          "zai_model": "Modele z.ai",
+          "elevenlabs_api_key": "Cle API ElevenLabs",
+          "rss_lookback_days": "Jours de recherche RSS",
+          "cache_enabled": "Activer le cache audio",
+          "cache_ttl_minutes": "Duree du cache en minutes",
+          "system_prompt": "Prompt systeme global"
+        }
+      },
       "topic_menu": {
         "title": "Sujets",
         "menu_options": {
@@ -40,7 +54,8 @@
     "abort": {
       "already_configured": "Le brief matinal est deja configure.",
       "invalid_import": "La configuration YAML importee est invalide.",
-      "no_topics": "Au moins un sujet est requis."
+      "no_topics": "Au moins un sujet est requis.",
+      "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
     }
   },
   "options": {
