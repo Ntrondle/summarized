@@ -54,7 +54,15 @@ class ZAIClient:
     ) -> str:
         """Assemble the final brief from the per-topic summaries."""
         user_content = json.dumps(
-            {"topic_summaries": topic_summaries},
+            {
+                "instruction": (
+                    "Voici des resumes intermediaires deja generes a partir des flux RSS. "
+                    "Ne lis pas cette structure JSON. Utilise uniquement le prompt systeme "
+                    "pour transformer ces resumes en brief final naturel, fluide et pret "
+                    "pour une synthese vocale."
+                ),
+                "topic_summaries": topic_summaries,
+            },
             ensure_ascii=True,
             indent=2,
         )

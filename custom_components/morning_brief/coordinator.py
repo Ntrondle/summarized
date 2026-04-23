@@ -83,6 +83,8 @@ class MorningBriefCoordinator:
             if not summaries:
                 raise RuntimeError("No topic summaries were generated")
 
+            _LOGGER.info("Morning Brief topic summaries generated: %s", summaries)
+
             final_brief = await self.llm_client.async_assemble_brief(
                 self.http_client,
                 self.config[CONF_SYSTEM_PROMPT],
@@ -90,6 +92,8 @@ class MorningBriefCoordinator:
             )
             if not final_brief:
                 raise RuntimeError("The final Morning Brief was empty")
+
+            _LOGGER.info("Morning Brief final LLM output for TTS: %s", final_brief)
 
             audio_bytes = await self.tts_client.async_generate_audio(
                 self.http_client,
@@ -112,4 +116,5 @@ class MorningBriefCoordinator:
             topic["topic_prompt"],
             topic["items"],
         )
+        _LOGGER.info("Morning Brief LLM topic output [%s]: %s", topic["name"], summary)
         return {"name": topic["name"], "summary": summary}
