@@ -4,6 +4,7 @@ from __future__ import annotations
 
 DOMAIN = "morning_brief"
 NAME = "Morning Brief"
+PLATFORMS = ["sensor"]
 
 SERVICE_GENERATE = "generate"
 
@@ -28,6 +29,9 @@ ATTR_ELEVENLABS_MODEL = "elevenlabs_model"
 DATA_CACHE_DIR = "cache_dir"
 DATA_SERVICE_REGISTERED = "service_registered"
 DATA_STATIC_REGISTERED = "static_registered"
+
+SENSOR_LATEST_BRIEF_KEY = "latest_brief"
+SENSOR_LATEST_BRIEF_NAME = "Latest Brief"
 
 DEFAULT_ZAI_BASE_URL = "https://api.z.ai/api/paas/v4"
 DEFAULT_ZAI_MODEL = "glm-5.1"

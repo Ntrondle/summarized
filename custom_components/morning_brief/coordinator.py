@@ -6,7 +6,8 @@ from typing import Any
 
 import httpx
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.util import dt as dt_util
 
 from .cache_manager import CacheManager
 from .const import (
@@ -51,6 +52,10 @@ class MorningBriefCoordinator:
         self.tts_client = tts_client
         self.media_controller = media_controller
         self.http_client = http_client
+        self.latest_brief: str | None = None
+        self.latest_topic_summaries: list[dict[str, str]] = []
+        self.latest_generated_at: str | None = None
+        self._listeners: list[CALLBACK_TYPE] = []
 
     async def async_generate_and_play(
         self,
@@ -93,6 +98,7 @@ class MorningBriefCoordinator:
             if not final_brief:
                 raise RuntimeError("The final Morning Brief was empty")
 
+            self._set_latest_brief(final_brief, summaries)
             _LOGGER.info("Morning Brief final LLM output for TTS: %s", final_brief)
 
             audio_bytes = await self.tts_client.async_generate_audio(
@@ -118,3 +124,28 @@ class MorningBriefCoordinator:
         )
         _LOGGER.info("Morning Brief LLM topic output [%s]: %s", topic["name"], summary)
         return {"name": topic["name"], "summary": summary}
+
+    @callback
+    def async_add_listener(self, update_callback: CALLBACK_TYPE) -> CALLBACK_TYPE:
+        """Register a listener for brief updates."""
+        self._listeners.append(update_callback)
+
+        @callback
+        def remove_listener() -> None:
+            self._listeners.remove(update_callback)
+
+        return remove_listener
+
+    @callback
+    def _set_latest_brief(
+        self,
+        brief: str,
+        topic_summaries: list[dict[str, str]],
+    ) -> None:
+        """Store the latest generated brief and notify entities."""
+        self.latest_brief = brief
+        self.latest_topic_summaries = topic_summaries
+        self.latest_generated_at = dt_util.utcnow().isoformat()
+
+        for update_callback in self._listeners:
+            update_callback()

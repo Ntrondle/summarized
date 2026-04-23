@@ -4,7 +4,8 @@
   "codeowners": [],
   "config_flow": true,
   "dependencies": [
-    "http"
+    "http",
+    "sensor"
   ],
   "documentation": "https://github.com/Ntrondle/summarized",
   "iot_class": "cloud_polling",

@@ -1,5 +1,12 @@
 {
   "title": "Morning Brief",
+  "entity": {
+    "sensor": {
+      "latest_brief": {
+        "name": "Latest brief"
+      }
+    }
+  },
   "config": {
     "step": {
       "user": {

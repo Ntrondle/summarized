@@ -45,6 +45,7 @@ from .const import (
     DATA_SERVICE_REGISTERED,
     DATA_STATIC_REGISTERED,
     DOMAIN,
+    PLATFORMS,
     SERVICE_GENERATE,
 )
 from .coordinator import MorningBriefCoordinator
@@ -164,11 +165,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.runtime_data = coordinator
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a Morning Brief config entry."""
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if not unload_ok:
+        return False
+
     coordinator: MorningBriefCoordinator | None = entry.runtime_data
     if coordinator is not None:
         await coordinator.http_client.aclose()
