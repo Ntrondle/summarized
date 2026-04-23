@@ -9,6 +9,13 @@ from typing import Any
 
 import httpx
 
+from .const import (
+    MAX_FINAL_BRIEF_CHARS,
+    MAX_TOPIC_SUMMARY_CHARS,
+    ZAI_FINAL_MAX_TOKENS,
+    ZAI_TOPIC_MAX_TOKENS,
+)
+
 _LOGGER = logging.getLogger(__name__)
 
 _MAX_RETRIES = 3
@@ -32,10 +39,23 @@ class ZAIClient:
         items: list[dict[str, Any]],
     ) -> str:
         """Generate a summary for a single topic."""
+        compact_items = [
+            {
+                "title": item.get("title", ""),
+                "snippet": item.get("snippet", ""),
+                "published": item.get("published", ""),
+            }
+            for item in items
+        ]
         user_content = json.dumps(
             {
+                "instruction": (
+                    "Resume ce sujet en francais en restant concis. "
+                    f"Maximum {MAX_TOPIC_SUMMARY_CHARS} caracteres. "
+                    "Ne recopie pas les donnees brutes."
+                ),
                 "topic": topic_name,
-                "items": items,
+                "items": compact_items,
             },
             ensure_ascii=True,
             indent=2,
@@ -44,6 +64,7 @@ class ZAIClient:
             client,
             system_prompt=topic_prompt,
             user_content=user_content,
+            max_tokens=ZAI_TOPIC_MAX_TOKENS,
         )
 
     async def async_assemble_brief(
@@ -59,7 +80,7 @@ class ZAIClient:
                     "Voici des resumes intermediaires deja generes a partir des flux RSS. "
                     "Ne lis pas cette structure JSON. Utilise uniquement le prompt systeme "
                     "pour transformer ces resumes en brief final naturel, fluide et pret "
-                    "pour une synthese vocale."
+                    f"pour une synthese vocale. Maximum {MAX_FINAL_BRIEF_CHARS} caracteres."
                 ),
                 "topic_summaries": topic_summaries,
             },
@@ -70,6 +91,7 @@ class ZAIClient:
             client,
             system_prompt=system_prompt,
             user_content=user_content,
+            max_tokens=ZAI_FINAL_MAX_TOKENS,
         )
 
     async def _async_chat_completion(
@@ -77,6 +99,7 @@ class ZAIClient:
         client: httpx.AsyncClient,
         system_prompt: str,
         user_content: str,
+        max_tokens: int,
     ) -> str:
         """Call the z.ai chat completions endpoint."""
         url = self._build_chat_completion_url()
@@ -86,12 +109,20 @@ class ZAIClient:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_content},
             ],
+            "max_tokens": max_tokens,
             "stream": False,
         }
         headers = {
             "Authorization": f"Bearer {self._api_key}",
             "Content-Type": "application/json",
         }
+
+        _LOGGER.info(
+            "Calling z.ai model %s with prompt size %s chars and max_tokens=%s",
+            self._model,
+            len(system_prompt) + len(user_content),
+            max_tokens,
+        )
 
         for attempt in range(_MAX_RETRIES + 1):
             try:
