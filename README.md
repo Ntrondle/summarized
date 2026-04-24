@@ -4,6 +4,10 @@ Morning Brief is a Home Assistant custom integration that builds a spoken news b
 
 This repository is structured for HACS as an `Integration` repository.
 
+
+<img width="2751" height="379" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/1787e180-b8b9-423f-abac-ab719e2a7202" />
+
+
 ## Features
 
 - Config flow support from Home Assistant UI
