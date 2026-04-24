@@ -1,6 +1,6 @@
 # Morning Brief
 
-Morning Brief is a Home Assistant custom integration that builds a French spoken news brief from RSS feeds, summarizes it with z.ai, synthesizes audio with ElevenLabs, and plays it on a Home Assistant media player.
+Morning Brief is a Home Assistant custom integration that builds a spoken news brief from RSS feeds, summarizes it with z.ai, synthesizes audio with ElevenLabs, and plays it on a Home Assistant media player.
 
 This repository is structured for HACS as an `Integration` repository.
 
